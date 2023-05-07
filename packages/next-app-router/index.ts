@@ -84,6 +84,7 @@ export function createTRPCNextCaller<TRouter extends AnyRouter>(
       return revalidateTag(fullPath);
     }
 
+    // not sure when to call this but this place is good enough
     const ctx = await createContext();
 
     if (type === "query") {
@@ -97,8 +98,9 @@ export function createTRPCNextCaller<TRouter extends AnyRouter>(
             ctx,
             type,
           }),
-        path,
+        path, // <- what does this do?
         {
+          // allow overriding revalidate time from caller
           revalidate: queryOptions.revalidate ?? revalidate,
           tags: [fullPath],
         },
