@@ -4,7 +4,7 @@ import { api, type RouterOutputs } from "~/utils/api";
 import { AuthButton } from "./auth-button";
 
 const PostCard: React.FC<{
-  post: RouterOutputs["post"]["all"][number];
+  post: RouterOutputs["post"]["all"]["items"][number];
 }> = ({ post }) => {
   return (
     <div className="flex flex-row rounded-lg bg-white/10 p-4 transition-all hover:scale-[101%]">
@@ -74,12 +74,16 @@ const PostList = async () => {
 
   return (
     <div className="w-full max-w-2xl">
-      {postQuery?.length === 0 ? (
+      <p className="-mt-4 mb-2 text-lg font-semibold">
+        Fetched posts at {new Date(postQuery.fetchedAt).toLocaleTimeString()} in{" "}
+        {postQuery.duration} ms.
+      </p>
+      {postQuery.items?.length === 0 ? (
         <span>There are no posts!</span>
       ) : (
         <div className="flex h-[40vh] justify-center overflow-y-scroll px-4 text-2xl">
           <div className="flex w-full flex-col gap-4">
-            {postQuery?.map((p) => {
+            {postQuery.items?.map((p) => {
               return <PostCard key={p.id} post={p} />;
             })}
           </div>
