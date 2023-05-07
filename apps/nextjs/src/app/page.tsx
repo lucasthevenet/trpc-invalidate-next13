@@ -48,6 +48,7 @@ const CreatePostForm = () => {
           title,
           content,
         });
+
         api.post.all.invalidate();
       }}
     >
@@ -68,9 +69,27 @@ const CreatePostForm = () => {
   );
 };
 
-async function Page() {
-  const postQuery = await api.post.all.query(undefined, {});
+const PostList = async () => {
+  const postQuery = await api.post.all.query();
 
+  return (
+    <div className="w-full max-w-2xl">
+      {postQuery?.length === 0 ? (
+        <span>There are no posts!</span>
+      ) : (
+        <div className="flex h-[40vh] justify-center overflow-y-scroll px-4 text-2xl">
+          <div className="flex w-full flex-col gap-4">
+            {postQuery?.map((p) => {
+              return <PostCard key={p.id} post={p} />;
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+function Page() {
   return (
     <main className="flex h-screen flex-col items-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
       <div className="container mt-12 flex flex-col items-center justify-center gap-4 px-4 py-8">
@@ -83,24 +102,10 @@ async function Page() {
         </Suspense>
 
         <CreatePostForm />
-
-        {postQuery ? (
-          <div className="w-full max-w-2xl">
-            {postQuery?.length === 0 ? (
-              <span>There are no posts!</span>
-            ) : (
-              <div className="flex h-[40vh] justify-center overflow-y-scroll px-4 text-2xl">
-                <div className="flex w-full flex-col gap-4">
-                  {postQuery?.map((p) => {
-                    return <PostCard key={p.id} post={p} />;
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-        ) : (
-          <p>Loading...</p>
-        )}
+        <Suspense fallback={"loading..."}>
+          {/* @ts-expect-error RSC */}
+          <PostList />
+        </Suspense>
       </div>
     </main>
   );

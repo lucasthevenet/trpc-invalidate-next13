@@ -71,6 +71,9 @@ export function createTRPCNextCaller<TRouter extends AnyRouter>(
     const fullPath = path.join(".");
 
     const procedure = router._def.procedures[fullPath] as AnyProcedure;
+    const tags = args[0]
+      ? [fullPath, fullPath + JSON.stringify(args[0])]
+      : [fullPath];
 
     let type: ProcedureType = "query";
 
@@ -81,7 +84,10 @@ export function createTRPCNextCaller<TRouter extends AnyRouter>(
     }
 
     if (type === "query" && lastPart === "invalidate") {
-      return revalidateTag(fullPath);
+      for (const tag of tags) {
+        revalidateTag(tag);
+      }
+      return;
     }
 
     // not sure when to call this but this place is good enough
@@ -102,7 +108,7 @@ export function createTRPCNextCaller<TRouter extends AnyRouter>(
         {
           // allow overriding revalidate time from caller
           revalidate: queryOptions.revalidate ?? revalidate,
-          tags: [fullPath],
+          tags: tags,
         },
       )();
     }
