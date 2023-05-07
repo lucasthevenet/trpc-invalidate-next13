@@ -3,8 +3,6 @@ import { Suspense } from "react";
 import { api, type RouterOutputs } from "~/utils/api";
 import { AuthButton } from "./auth-button";
 
-export const revalidate = 60;
-
 const PostCard: React.FC<{
   post: RouterOutputs["post"]["all"]["items"][number];
 }> = ({ post }) => {
